@@ -13,21 +13,30 @@ jobs:
       id-token: write
 
     steps:
-      - name: 📥 Checkout
+      # 📥 Checkout repository
+      - name: 📥 Checkout Code
         uses: actions/checkout@v4
 
+      # ⚙️ Setup GitHub Pages
       - name: ⚙️ Setup Pages
         uses: actions/configure-pages@v4
 
+      # 📦 Prepare build folder (FIXED)
       - name: 📦 Prepare Build
         run: |
           mkdir dist
-          cp -r * dist
+          rsync -av \
+            --exclude=dist \
+            --exclude=.git \
+            --exclude=.github \
+            ./ dist/
 
-      - name: 📤 Upload Artifact
+      # 📤 Upload artifact
+      - name: 📤 Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 
+      # 🚀 Deploy to GitHub Pages
       - name: 🚀 Deploy
         uses: actions/deploy-pages@v4
